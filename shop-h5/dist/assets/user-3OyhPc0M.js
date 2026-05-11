@@ -1,0 +1,1 @@
+import{z as t}from"./request-fbUGXCYa.js";function s(r,e){return t.post("/api/user/login",{phone:r,password:e})}function i(r,e){return t.post("/api/user/register",{phone:r,password:e})}function o(){return t.get("/api/user/info")}export{o as g,s as l,i as r};
