@@ -15,7 +15,6 @@ import com.shopx.model.entity.Store;
 import com.shopx.model.vo.ProductVO;
 import com.shopx.model.vo.StoreVO;
 import com.shopx.service.product.ProductService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,12 +24,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
     private final ProductMapper productMapper;
     private final ProductStoreMapper productStoreMapper;
     private final StoreMapper storeMapper;
+
+    public ProductServiceImpl(ProductMapper productMapper,
+                              ProductStoreMapper productStoreMapper,
+                              StoreMapper storeMapper) {
+        this.productMapper = productMapper;
+        this.productStoreMapper = productStoreMapper;
+        this.storeMapper = storeMapper;
+    }
 
     @Override
     public IPage<ProductVO> listProducts(Integer status, int page, int size) {

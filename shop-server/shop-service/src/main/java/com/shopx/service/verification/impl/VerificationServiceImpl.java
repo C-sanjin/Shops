@@ -25,8 +25,8 @@ import com.shopx.model.enums.OrderStatus;
 import com.shopx.model.enums.VerifyStatus;
 import com.shopx.model.vo.VerifyCodeVO;
 import com.shopx.service.verification.VerificationService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,10 +38,10 @@ import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.concurrent.TimeUnit;
 
-@Slf4j
 @Service
-@RequiredArgsConstructor
 public class VerificationServiceImpl implements VerificationService {
+
+    private static final Logger log = LoggerFactory.getLogger(VerificationServiceImpl.class);
 
     private final VerificationCodeMapper verificationCodeMapper;
     private final StoreMapper storeMapper;
@@ -49,6 +49,20 @@ public class VerificationServiceImpl implements VerificationService {
     private final OperationLogMapper operationLogMapper;
     private final RedisService redisService;
     private final RedisLockUtil redisLockUtil;
+
+    public VerificationServiceImpl(VerificationCodeMapper verificationCodeMapper,
+                                   StoreMapper storeMapper,
+                                   OrderMapper orderMapper,
+                                   OperationLogMapper operationLogMapper,
+                                   RedisService redisService,
+                                   RedisLockUtil redisLockUtil) {
+        this.verificationCodeMapper = verificationCodeMapper;
+        this.storeMapper = storeMapper;
+        this.orderMapper = orderMapper;
+        this.operationLogMapper = operationLogMapper;
+        this.redisService = redisService;
+        this.redisLockUtil = redisLockUtil;
+    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)

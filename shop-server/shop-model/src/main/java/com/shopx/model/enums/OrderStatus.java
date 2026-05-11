@@ -1,8 +1,5 @@
 package com.shopx.model.enums;
 
-import lombok.Getter;
-
-@Getter
 public enum OrderStatus {
 
     PENDING(0, "待支付"),
@@ -17,6 +14,14 @@ public enum OrderStatus {
     OrderStatus(int code, String desc) {
         this.code = code;
         this.desc = desc;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public String getDesc() {
+        return desc;
     }
 
     public static OrderStatus fromCode(int code) {

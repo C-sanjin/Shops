@@ -1,8 +1,5 @@
 package com.shopx.model.enums;
 
-import lombok.Getter;
-
-@Getter
 public enum PayStatus {
 
     UNPAID(0, "未支付"),
@@ -15,6 +12,14 @@ public enum PayStatus {
     PayStatus(int code, String desc) {
         this.code = code;
         this.desc = desc;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public String getDesc() {
+        return desc;
     }
 
     public static PayStatus fromCode(int code) {

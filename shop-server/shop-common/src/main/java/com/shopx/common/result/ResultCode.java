@@ -1,8 +1,5 @@
 package com.shopx.common.result;
 
-import lombok.Getter;
-
-@Getter
 public enum ResultCode {
 
     SUCCESS(200, "操作成功"),
@@ -45,5 +42,13 @@ public enum ResultCode {
     ResultCode(int code, String msg) {
         this.code = code;
         this.msg = msg;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public String getMsg() {
+        return msg;
     }
 }

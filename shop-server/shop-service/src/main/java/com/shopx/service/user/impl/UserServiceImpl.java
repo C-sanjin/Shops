@@ -7,17 +7,20 @@ import com.shopx.common.utils.JwtUtil;
 import com.shopx.dao.mapper.UserMapper;
 import com.shopx.model.entity.User;
 import com.shopx.service.user.UserService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserMapper userMapper;
     private final JwtUtil jwtUtil;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    public UserServiceImpl(UserMapper userMapper, JwtUtil jwtUtil) {
+        this.userMapper = userMapper;
+        this.jwtUtil = jwtUtil;
+    }
 
     @Override
     public String login(String phone, String password) {

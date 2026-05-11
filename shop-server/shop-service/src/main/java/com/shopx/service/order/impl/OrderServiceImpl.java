@@ -26,7 +26,6 @@ import com.shopx.model.vo.OrderItemVO;
 import com.shopx.model.vo.OrderVO;
 import com.shopx.model.vo.VerifyCodeVO;
 import com.shopx.service.order.OrderService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +36,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
     private final ProductMapper productMapper;
@@ -45,6 +43,18 @@ public class OrderServiceImpl implements OrderService {
     private final OrderMapper orderMapper;
     private final OrderItemMapper orderItemMapper;
     private final VerificationCodeMapper verificationCodeMapper;
+
+    public OrderServiceImpl(ProductMapper productMapper,
+                            StoreMapper storeMapper,
+                            OrderMapper orderMapper,
+                            OrderItemMapper orderItemMapper,
+                            VerificationCodeMapper verificationCodeMapper) {
+        this.productMapper = productMapper;
+        this.storeMapper = storeMapper;
+        this.orderMapper = orderMapper;
+        this.orderItemMapper = orderItemMapper;
+        this.verificationCodeMapper = verificationCodeMapper;
+    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)

@@ -1,5 +1,7 @@
 package com.shopx.dao.redis;
 
+import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
@@ -55,10 +57,12 @@ public class RedisService {
     }
 
     public void pipelineSet(Map<String, Object> dataMap, long timeout, TimeUnit unit) {
-        redisTemplate.executePipelined((connection) -> {
+        redisTemplate.executePipelined((RedisCallback<Object>) (connection) -> {
             dataMap.forEach((key, value) -> {
                 byte[] keyBytes = redisTemplate.getStringSerializer().serialize(key);
-                byte[] valueBytes = redisTemplate.getValueSerializer().serialize(value);
+                @SuppressWarnings("unchecked")
+                RedisSerializer<Object> valueSerializer = (RedisSerializer<Object>) redisTemplate.getValueSerializer();
+                byte[] valueBytes = valueSerializer.serialize(value);
                 if (keyBytes != null && valueBytes != null) {
                     connection.set(keyBytes, valueBytes);
                     long seconds = unit.toSeconds(timeout);

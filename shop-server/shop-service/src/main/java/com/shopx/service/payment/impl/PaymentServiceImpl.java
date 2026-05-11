@@ -17,14 +17,12 @@ import com.shopx.model.enums.PayType;
 import com.shopx.model.vo.VerifyCodeVO;
 import com.shopx.service.payment.PaymentService;
 import com.shopx.service.verification.VerificationService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
 
     private final OrderMapper orderMapper;
@@ -32,6 +30,18 @@ public class PaymentServiceImpl implements PaymentService {
     private final StorePaymentQuotaMapper storePaymentQuotaMapper;
     private final StoreMapper storeMapper;
     private final VerificationService verificationService;
+
+    public PaymentServiceImpl(OrderMapper orderMapper,
+                              VirtualPaymentConfigMapper virtualPaymentConfigMapper,
+                              StorePaymentQuotaMapper storePaymentQuotaMapper,
+                              StoreMapper storeMapper,
+                              VerificationService verificationService) {
+        this.orderMapper = orderMapper;
+        this.virtualPaymentConfigMapper = virtualPaymentConfigMapper;
+        this.storePaymentQuotaMapper = storePaymentQuotaMapper;
+        this.storeMapper = storeMapper;
+        this.verificationService = verificationService;
+    }
 
     @Override
     public VerifyCodeVO pay(Long userId, PaymentDTO dto) {
@@ -43,7 +53,10 @@ public class PaymentServiceImpl implements PaymentService {
             throw new BizException(ResultCode.ORDER_STATUS_ERROR);
         }
 
-        PayType payType = PayType.valueOf(dto.getPayType());
+        PayType payType = PayType.fromCode(dto.getPayType());
+        if (payType == null) {
+            throw new BizException(ResultCode.FAIL, "暂不支持该支付方式");
+        }
         switch (payType) {
             case VIRTUAL:
                 return virtualPay(userId, order);

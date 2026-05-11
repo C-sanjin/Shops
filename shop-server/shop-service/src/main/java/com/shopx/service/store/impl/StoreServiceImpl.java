@@ -12,7 +12,6 @@ import com.shopx.model.entity.Store;
 import com.shopx.model.entity.StorePaymentQuota;
 import com.shopx.model.vo.StoreVO;
 import com.shopx.service.store.StoreService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -20,11 +19,16 @@ import java.math.BigDecimal;
 import java.util.Random;
 
 @Service
-@RequiredArgsConstructor
 public class StoreServiceImpl implements StoreService {
 
     private final StoreMapper storeMapper;
     private final StorePaymentQuotaMapper storePaymentQuotaMapper;
+
+    public StoreServiceImpl(StoreMapper storeMapper,
+                            StorePaymentQuotaMapper storePaymentQuotaMapper) {
+        this.storeMapper = storeMapper;
+        this.storePaymentQuotaMapper = storePaymentQuotaMapper;
+    }
 
     @Override
     public IPage<StoreVO> listStores(Integer status, int page, int size) {

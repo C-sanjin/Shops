@@ -6,7 +6,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/shopx?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: root
-    password: root
+    password:
   data:
     redis:
       host: localhost
@@ -14,6 +14,7 @@ spring:
       database: 0
 
 mybatis-plus:
+  mapper-locations: classpath*:mapper/**/*.xml
   configuration:
     map-underscore-to-camel-case: true
   global-config:
@@ -24,8 +25,9 @@ mybatis-plus:
 
 shopx:
   jwt:
-    secret: shopx-jwt-secret-key-2024
+    secret: ShopX2026SecretKeyForJwtTokenGenerationAndValidationMustBeLongEnough
+    access-token-expire: 7200
+    refresh-token-expire: 604800
   verify-code:
-    width: 120
-    height: 40
-    length: 4
+    prefix: VP
+    expire-hours: 168

@@ -16,7 +16,8 @@ import com.shopx.model.entity.VirtualPaymentConfig;
 import com.shopx.model.enums.OrderStatus;
 import com.shopx.model.enums.PayType;
 import com.shopx.model.enums.VerifyStatus;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.springframework.stereotype.Component;
@@ -24,9 +25,10 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.util.List;
 
-@Slf4j
 @Component
 public class OrderExpireJob implements Job {
+
+    private static final Logger log = LoggerFactory.getLogger(OrderExpireJob.class);
 
     private final OrderMapper orderMapper;
     private final VerificationCodeMapper verificationCodeMapper;

@@ -1,8 +1,5 @@
 package com.shopx.model.enums;
 
-import lombok.Getter;
-
-@Getter
 public enum VerifyStatus {
 
     UNUSED(0, "未使用"),
@@ -16,6 +13,14 @@ public enum VerifyStatus {
     VerifyStatus(int code, String desc) {
         this.code = code;
         this.desc = desc;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public String getDesc() {
+        return desc;
     }
 
     public static VerifyStatus fromCode(int code) {

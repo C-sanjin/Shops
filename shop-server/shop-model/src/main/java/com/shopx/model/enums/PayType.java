@@ -1,8 +1,5 @@
 package com.shopx.model.enums;
 
-import lombok.Getter;
-
-@Getter
 public enum PayType {
 
     WECHAT(1, "微信支付"),
@@ -16,6 +13,14 @@ public enum PayType {
     PayType(int code, String desc) {
         this.code = code;
         this.desc = desc;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public String getDesc() {
+        return desc;
     }
 
     public static PayType fromCode(int code) {
