@@ -1,0 +1,160 @@
+CREATE DATABASE IF NOT EXISTS shopx DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+USE shopx;
+
+CREATE TABLE t_store (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    store_name VARCHAR(100) NOT NULL,
+    store_code VARCHAR(50) NOT NULL,
+    address VARCHAR(255) DEFAULT NULL,
+    contact_phone VARCHAR(20) DEFAULT NULL,
+    business_hours VARCHAR(100) DEFAULT NULL,
+    status TINYINT NOT NULL DEFAULT 1,
+    longitude DECIMAL(10, 6) DEFAULT NULL,
+    latitude DECIMAL(10, 6) DEFAULT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted TINYINT NOT NULL DEFAULT 0,
+    UNIQUE INDEX uk_store_code (store_code)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE t_product (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    product_name VARCHAR(200) NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    original_price DECIMAL(10, 2) DEFAULT NULL,
+    stock INT NOT NULL DEFAULT 0,
+    description TEXT DEFAULT NULL,
+    images JSON DEFAULT NULL,
+    store_scope TINYINT NOT NULL DEFAULT 0,
+    status TINYINT NOT NULL DEFAULT 1,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted TINYINT NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE t_product_store (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    product_id BIGINT NOT NULL,
+    store_id BIGINT NOT NULL,
+    UNIQUE INDEX uk_product_store (product_id, store_id),
+    INDEX idx_product_id (product_id),
+    INDEX idx_store_id (store_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE t_user (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    phone VARCHAR(20) NOT NULL,
+    password VARCHAR(100) NOT NULL,
+    nickname VARCHAR(50) DEFAULT NULL,
+    avatar VARCHAR(255) DEFAULT NULL,
+    status TINYINT NOT NULL DEFAULT 1,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE INDEX uk_phone (phone)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE t_order (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    order_no VARCHAR(64) NOT NULL,
+    user_id BIGINT NOT NULL,
+    store_id BIGINT NOT NULL,
+    total_amount DECIMAL(10, 2) NOT NULL,
+    pay_amount DECIMAL(10, 2) NOT NULL,
+    pay_type TINYINT DEFAULT NULL,
+    pay_status TINYINT NOT NULL DEFAULT 0,
+    order_status TINYINT NOT NULL DEFAULT 0,
+    proxy_store_id BIGINT DEFAULT NULL,
+    remark VARCHAR(500) DEFAULT NULL,
+    expire_time DATETIME DEFAULT NULL,
+    pay_time DATETIME DEFAULT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE INDEX uk_order_no (order_no),
+    INDEX idx_user_status (user_id, order_status),
+    INDEX idx_store_status (store_id, order_status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE t_order_item (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    order_id BIGINT NOT NULL,
+    product_id BIGINT NOT NULL,
+    product_name VARCHAR(200) NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    quantity INT NOT NULL,
+    INDEX idx_order_id (order_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE t_verification_code (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    code VARCHAR(64) NOT NULL,
+    order_id BIGINT NOT NULL,
+    order_no VARCHAR(64) NOT NULL,
+    user_id BIGINT NOT NULL,
+    store_id BIGINT NOT NULL,
+    status TINYINT NOT NULL DEFAULT 0,
+    used_time DATETIME DEFAULT NULL,
+    verified_by BIGINT DEFAULT NULL,
+    expire_time DATETIME DEFAULT NULL,
+    batch_no VARCHAR(64) DEFAULT NULL,
+    version INT NOT NULL DEFAULT 0,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE INDEX uk_code (code),
+    INDEX idx_order_id (order_id),
+    INDEX idx_user_id (user_id),
+    INDEX idx_store_status (store_id, status),
+    INDEX idx_batch_no (batch_no),
+    INDEX idx_expire_time (expire_time)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE t_virtual_payment_config (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    config_name VARCHAR(100) NOT NULL,
+    total_amount DECIMAL(10, 2) NOT NULL,
+    used_amount DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    store_id BIGINT NOT NULL DEFAULT 0,
+    status TINYINT NOT NULL DEFAULT 1,
+    expire_time DATETIME DEFAULT NULL,
+    version INT NOT NULL DEFAULT 0,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE t_store_payment_quota (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    store_id BIGINT NOT NULL,
+    total_quota DECIMAL(10, 2) NOT NULL,
+    used_quota DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    status TINYINT NOT NULL DEFAULT 1,
+    version INT NOT NULL DEFAULT 0,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE INDEX uk_store_id (store_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE t_admin (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
+    password VARCHAR(100) NOT NULL,
+    real_name VARCHAR(50) DEFAULT NULL,
+    phone VARCHAR(20) DEFAULT NULL,
+    role TINYINT NOT NULL DEFAULT 2,
+    store_id BIGINT DEFAULT NULL,
+    status TINYINT NOT NULL DEFAULT 1,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE INDEX uk_username (username)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE t_operation_log (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    operator_id BIGINT NOT NULL,
+    operator_type TINYINT NOT NULL,
+    module VARCHAR(50) NOT NULL,
+    action VARCHAR(50) NOT NULL,
+    detail TEXT DEFAULT NULL,
+    ip VARCHAR(50) DEFAULT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_module_action (module, action)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

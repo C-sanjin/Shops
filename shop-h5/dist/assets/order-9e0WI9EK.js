@@ -1,0 +1,1 @@
+import{z as e}from"./request-fbUGXCYa.js";function a(r){return e.post("/api/order/create",r)}function n(r){return e.get("/api/order/list",{params:r})}function i(r){return e.get(`/api/order/${r}`)}function o(r){return e.put(`/api/order/${r}/cancel`)}export{i as a,o as b,a as c,n as g};
