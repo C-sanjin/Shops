@@ -1,7 +1,7 @@
 USE shopx;
 
 INSERT INTO t_admin (username, password, real_name, phone, role, store_id, status) VALUES
-('admin', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVKIUi', '超级管理员', '13800000000', 1, NULL, 1);
+('admin', '$2a$10$zbTHCnAXCZbLlvghV3eg9ugDlWGVUX1ggXtHJS3yyd/g..T3EjOIu', '超级管理员', '13800000000', 1, NULL, 1);
 
 INSERT INTO t_store (store_name, store_code, address, contact_phone, business_hours, status, longitude, latitude) VALUES
 ('旗舰店', 'STORE001', '北京市朝阳区建国路88号', '010-88880001', '09:00-22:00', 1, 116.461000, 39.908000),
