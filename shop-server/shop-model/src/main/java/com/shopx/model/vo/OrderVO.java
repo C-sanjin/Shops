@@ -6,6 +6,7 @@ import java.util.List;
 
 public class OrderVO {
 
+    private Long id;
     private String orderNo;
     private Long userId;
     private Long storeId;
@@ -25,6 +26,14 @@ public class OrderVO {
     private LocalDateTime createdAt;
     private List<OrderItemVO> items;
     private VerifyCodeVO verifyCode;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getOrderNo() {
         return orderNo;

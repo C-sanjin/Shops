@@ -73,9 +73,11 @@ const router = createRouter({
   routes
 })
 
+const publicRoutes = ['Home', 'ProductList', 'ProductDetail', 'StoreList', 'StoreDetail', 'Login', 'Register']
+
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token')
-  if (to.name !== 'Login' && to.name !== 'Register' && !token) {
+  if (!publicRoutes.includes(to.name) && !token) {
     next({ name: 'Login', query: { redirect: to.fullPath } })
   } else {
     next()

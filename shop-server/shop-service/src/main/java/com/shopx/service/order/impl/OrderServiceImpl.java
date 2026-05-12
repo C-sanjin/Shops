@@ -133,7 +133,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public IPage<OrderVO> getOrderList(Long userId, Integer orderStatus, int page, int size) {
         LambdaQueryWrapper<Order> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Order::getUserId, userId);
+        if (userId != null) {
+            wrapper.eq(Order::getUserId, userId);
+        }
         if (orderStatus != null) {
             wrapper.eq(Order::getOrderStatus, orderStatus);
         }
@@ -151,7 +153,7 @@ public class OrderServiceImpl implements OrderService {
         if (order == null) {
             throw new BizException(ResultCode.ORDER_NOT_FOUND);
         }
-        if (!order.getUserId().equals(userId)) {
+        if (userId != null && !order.getUserId().equals(userId)) {
             throw new BizException(ResultCode.ORDER_NOT_FOUND);
         }
         return convertToVO(order);
@@ -164,7 +166,7 @@ public class OrderServiceImpl implements OrderService {
         if (order == null) {
             throw new BizException(ResultCode.ORDER_NOT_FOUND);
         }
-        if (!order.getUserId().equals(userId)) {
+        if (userId != null && !order.getUserId().equals(userId)) {
             throw new BizException(ResultCode.ORDER_NOT_FOUND);
         }
         if (order.getOrderStatus() != OrderStatus.PENDING.getCode()) {

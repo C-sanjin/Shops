@@ -13,5 +13,5 @@ export function getOrderDetail(id) {
 }
 
 export function cancelOrder(id) {
-  return request.put(`/api/order/${id}/cancel`)
+  return request.post(`/api/order/${id}/cancel`)
 }

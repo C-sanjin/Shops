@@ -4,29 +4,52 @@
 
     <div v-if="order" class="detail-content">
       <div class="status-card">
-        <div class="status-text">{{ statusText(order.status) }}</div>
+        <div class="status-text">{{ order.orderStatusDesc }}</div>
       </div>
 
       <div class="section-card">
         <div class="section-title">商品信息</div>
         <van-cell-group :border="false">
-          <van-cell title="商品名称" :value="order.productName" />
-          <van-cell title="数量" :value="order.quantity" />
-          <van-cell title="金额" :value="`¥${order.totalAmount || order.amount}`" />
+          <van-cell
+            v-for="item in order.items"
+            :key="item.productId"
+            :title="item.productName"
+            :value="`x${item.quantity}`"
+            :label="`¥${item.price}`"
+          />
         </van-cell-group>
+        <van-cell title="实付金额" :value="`¥${order.payAmount}`" class="amount-cell" />
       </div>
 
       <div class="section-card">
         <div class="section-title">门店信息</div>
         <van-cell-group :border="false">
-          <van-cell title="门店名称" :value="order.storeName" />
-          <van-cell title="门店地址" :value="order.storeAddress" />
+          <van-cell title="门店名称" :value="order.storeName || '-'" />
+        </van-cell-group>
+      </div>
+
+      <div class="section-card">
+        <div class="section-title">订单信息</div>
+        <van-cell-group :border="false">
+          <van-cell title="订单号" :value="order.orderNo" />
+          <van-cell title="支付方式" :value="order.payTypeDesc || '-'" />
+          <van-cell title="下单时间" :value="formatTime(order.createdAt)" />
+          <van-cell v-if="order.payTime" title="支付时间" :value="formatTime(order.payTime)" />
+          <van-cell v-if="order.remark" title="备注" :value="order.remark" />
+        </van-cell-group>
+      </div>
+
+      <div v-if="order.verifyCode" class="section-card">
+        <div class="section-title">核销码</div>
+        <van-cell-group :border="false">
+          <van-cell title="核销码" :value="order.verifyCode.code" />
+          <van-cell title="状态" :value="order.verifyCode.statusDesc || '-'" />
         </van-cell-group>
       </div>
 
       <div class="bottom-actions">
         <van-button
-          v-if="order.status === 'paid'"
+          v-if="order.orderStatus === 1"
           type="primary"
           block
           round
@@ -36,7 +59,7 @@
           查看核销码
         </van-button>
         <van-button
-          v-if="order.status === 'pending'"
+          v-if="order.orderStatus === 0"
           type="default"
           block
           round
@@ -45,6 +68,10 @@
           取消订单
         </van-button>
       </div>
+    </div>
+
+    <div v-else class="loading">
+      <van-loading size="24px">加载中...</van-loading>
     </div>
   </div>
 </template>
@@ -60,18 +87,13 @@ const route = useRoute()
 const router = useRouter()
 const order = ref(null)
 
-const statusText = (status) => {
-  const map = {
-    pending: '待付款',
-    paid: '待核销',
-    verified: '已核销',
-    cancelled: '已取消'
-  }
-  return map[status] || status
+const formatTime = (time) => {
+  if (!time) return '-'
+  return time.replace('T', ' ').substring(0, 19)
 }
 
 const goVerifyCode = () => {
-  router.push({ name: 'VerifyCode', params: { orderId: order.value.id } })
+  router.push({ name: 'VerifyCode', params: { orderId: route.params.id } })
 }
 
 const handleCancel = async () => {
@@ -80,7 +102,7 @@ const handleCancel = async () => {
       title: '提示',
       message: '确定要取消该订单吗？'
     })
-    await cancelOrder(order.value.id)
+    await cancelOrder(route.params.id)
     showToast('订单已取消')
     fetchOrder()
   } catch {
@@ -135,11 +157,23 @@ onMounted(() => {
   padding: 12px 16px 8px;
 }
 
+.amount-cell :deep(.van-cell__value) {
+  color: #ee0a24;
+  font-weight: 600;
+  font-size: 16px;
+}
+
 .bottom-actions {
   padding: 24px 16px;
 }
 
 .bottom-actions .van-button {
   margin-bottom: 10px;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding-top: 100px;
 }
 </style>
