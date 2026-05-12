@@ -101,6 +101,10 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public VerifyCodeVO storeProxyPay(Long userId, Order order) {
+        if (order.getProxyStoreId() == null) {
+            throw new BizException(ResultCode.STORE_QUOTA_INSUFFICIENT);
+        }
+
         LambdaUpdateWrapper<StorePaymentQuota> queryWrapper = new LambdaUpdateWrapper<>();
         queryWrapper.eq(StorePaymentQuota::getStoreId, order.getProxyStoreId())
                 .eq(StorePaymentQuota::getStatus, 1);
@@ -120,6 +124,7 @@ public class PaymentServiceImpl implements PaymentService {
             throw new BizException(ResultCode.STORE_QUOTA_INSUFFICIENT);
         }
 
+        order.setStoreId(order.getProxyStoreId());
         VerifyCodeVO verifyCodeVO = verificationService.generateCode(order);
 
         Order updateOrder = new Order();
@@ -128,6 +133,7 @@ public class PaymentServiceImpl implements PaymentService {
         updateOrder.setOrderStatus(OrderStatus.AWAITING_VERIFY.getCode());
         updateOrder.setPayType(PayType.STORE_PROXY.getCode());
         updateOrder.setPayTime(LocalDateTime.now());
+        updateOrder.setStoreId(order.getProxyStoreId());
         orderMapper.updateById(updateOrder);
 
         return verifyCodeVO;
