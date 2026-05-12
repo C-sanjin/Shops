@@ -51,7 +51,7 @@ const goDetail = (id) => {
 const fetchStores = async () => {
   try {
     const res = await getStoreList()
-    stores.value = res.data?.list || res.data || []
+    stores.value = res.data?.records || res.data || []
   } catch {
     stores.value = []
   }

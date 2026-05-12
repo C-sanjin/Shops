@@ -4,9 +4,9 @@
 
     <van-tabs v-model:active="activeTab" sticky>
       <van-tab title="全部" name="all" />
-      <van-tab title="待付" name="pending" />
-      <van-tab title="待核销" name="paid" />
-      <van-tab title="已核销" name="verified" />
+      <van-tab title="待付" name="0" />
+      <van-tab title="待核销" name="1" />
+      <van-tab title="已核销" name="2" />
     </van-tabs>
 
     <van-list
@@ -24,11 +24,15 @@
         >
           <div class="order-header">
             <span class="order-no">订单号：{{ order.orderNo }}</span>
-            <van-tag :type="statusTagType(order.status)">{{ statusText(order.status) }}</van-tag>
+            <van-tag :type="statusTagType(order.orderStatus)">{{ order.orderStatusDesc }}</van-tag>
           </div>
           <div class="order-body">
-            <div class="order-product">{{ order.productName }}</div>
-            <div class="order-amount">¥{{ order.totalAmount || order.amount }}</div>
+            <div class="order-product">{{ getOrderProductName(order) }}</div>
+            <div class="order-amount">¥{{ order.payAmount }}</div>
+          </div>
+          <div class="order-footer">
+            <span class="order-pay-type">{{ order.payTypeDesc }}</span>
+            <span class="order-time">{{ order.createdAt }}</span>
           </div>
         </div>
       </div>
@@ -50,24 +54,21 @@ const page = ref(1)
 const pageSize = 10
 const activeTab = ref('all')
 
-const statusText = (status) => {
-  const map = {
-    pending: '待付款',
-    paid: '待核销',
-    verified: '已核销',
-    cancelled: '已取消'
-  }
-  return map[status] || status
-}
-
 const statusTagType = (status) => {
   const map = {
-    pending: 'warning',
-    paid: 'primary',
-    verified: 'success',
-    cancelled: 'default'
+    0: 'warning',
+    1: 'primary',
+    2: 'success',
+    3: 'default'
   }
   return map[status] || 'default'
+}
+
+const getOrderProductName = (order) => {
+  if (order.items && order.items.length > 0) {
+    return order.items.map(i => `${i.productName}x${i.quantity}`).join('、')
+  }
+  return ''
 }
 
 const goDetail = (id) => {
@@ -78,10 +79,10 @@ const onLoad = async () => {
   try {
     const params = { page: page.value, pageSize }
     if (activeTab.value !== 'all') {
-      params.status = activeTab.value
+      params.orderStatus = activeTab.value
     }
     const res = await getOrderList(params)
-    const list = res.data?.list || res.data || []
+    const list = res.data?.records || res.data || []
     orders.value.push(...list)
     loading.value = false
     if (list.length < pageSize) {
@@ -156,5 +157,14 @@ watch(activeTab, () => {
   font-weight: 600;
   color: #ee0a24;
   flex-shrink: 0;
+}
+
+.order-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  font-size: 12px;
+  color: #999;
 }
 </style>

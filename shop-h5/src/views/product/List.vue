@@ -34,7 +34,7 @@ const pageSize = 10
 const onLoad = async () => {
   try {
     const res = await getProductList({ page: page.value, pageSize })
-    const list = res.data?.list || res.data || []
+    const list = res.data?.records || res.data || []
     products.value.push(...list)
     loading.value = false
     if (list.length < pageSize) {

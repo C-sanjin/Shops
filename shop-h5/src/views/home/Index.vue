@@ -59,7 +59,7 @@ const goStoreList = () => {
 const fetchProducts = async () => {
   try {
     const res = await getProductList({ page: 1, pageSize: 10 })
-    products.value = res.data?.list || res.data || []
+    products.value = res.data?.records || res.data || []
   } catch {
     products.value = []
   }
